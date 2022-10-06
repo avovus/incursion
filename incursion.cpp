@@ -4,8 +4,11 @@
 #include <string>
 #include <vector>
 #include <SDL2/SDL_ttf.h>
-const int SCREEN_W = 600;
-const int SCREEN_H = 600;
+
+#include "lib/Mob.hpp"
+#include "lib/Player.hpp"
+#include "lib/Constants.hpp"
+
 using namespace std;
 
 bool init();
@@ -24,96 +27,6 @@ SDL_Renderer* gRenderer = NULL;
 
 string vercion = "alpha 2.5";
 string creator = "Vovan kovan";
-
-class Mob{
-	public:
-		virtual void move() = 0;
-		virtual void render() = 0;
-		virtual ~Mob() {};
-};
-
-class Player{
-	private:
-		SDL_Rect quad = { 200, 300, W, H }; //хидбокс игрока
-		SDL_Texture* texture = NULL;
-		const static int W = 80, H = 50, SPEED = 1;
-		int speedX = 0;
-		int speedY = 0;
-	public:
-		Player(int x, int y, SDL_Texture* texture){
-			this -> texture = texture;
-			quad.x = x;
-			quad.y = y;
-		}
-
-		void move(){
-			if(speedY > 0){
-				if(quad.y+speedY+H >= SCREEN_H){
-					quad.y+=(SCREEN_H - (quad.y+H));
-				}
-				else{
-					quad.y += speedY;
-				}
-			}
-			else{
-				if(quad.y+speedY < 0){
-					quad.y = 0;
-				}
-				else{
-					quad.y += speedY;
-				}
-			}
-			if(speedX > 0){
-				if(quad.x+speedX+W >= SCREEN_W){
-					quad.x +=(SCREEN_W - (quad.x+W));
-				}
-				else{
-					quad.x += speedX;
-				}
-			}
-			else{
-				if(quad.x+speedX < 0){
-					quad.x = 0;
-				}
-				else{
-					quad.x += speedX;
-				}
-			}
-		}
-
-		void speedYUp(){
-			if(speedY < 1){
-				speedY += SPEED;
-			}
-		}
-
-		void speedYDown(){
-			if(speedY > -1){
-				speedY -= SPEED;
-			}
-		}
-
-		void speedXUp(){
-			if(speedX < 1){
-				speedX += SPEED;
-			}
-		}
-
-		void speedXDown(){
-			if(speedX > -1){
-				speedX -= SPEED;
-			}
-		}
-
-		void printSpeed(){
-			cout << "speedX:" << speedX << endl;
-			cout << "speedY:" << speedY << endl;
-		}
-
-		void render(){
-			SDL_RenderCopy( gRenderer, texture, NULL, &quad );
-		}
-};
 
 class Clyn: public Mob{
 	private:
@@ -284,31 +197,32 @@ bool init()
 bool loadMedia()
 {
 	bool success = true;
-	lazerTexture = loadTexture( "/home/vova/incursion/lazer3.png" );
-	ufoTexture = loadTexture( "/home/vova/incursion/ufo.png" );
-	playerTexture = loadTexture( "/home/vova/incursion/ship.png" );
-	boomTexture = loadTexture( "/home/vova/incursion/boom.png" );
-	shotTexture = loadTexture( "/home/vova/incursion/shot2.png" );
-	gTexture = loadTexture( "/home/vova/incursion/city2.png" );
-	clynTexture = loadTexture( "/home/vova/incursion/clyn.png" );
-	clynTexture2 = loadTexture( "/home/vova/incursion/clyn2.png" );
-	carTexture2 = loadTexture( "/home/vova/incursion/car2.png" );
-	carTexture = loadTexture( "/home/vova/incursion/car.png" );
-	menuTexture = loadTexture( "/home/vova/incursion/menu.png" );
+	//lazerTexture = loadTexture( "/home/vova/incursion/lazer3.png" );
+	//ufoTexture = loadTexture( "/home/vova/incursion/ufo.png" );
+	playerTexture = loadTexture( "images/ship.png" );
+	//boomTexture = loadTexture( "/home/vova/incursion/boom.png" );
+	//shotTexture = loadTexture( "/home/vova/incursion/shot2.png" );
+	gTexture = loadTexture( "images/city2.png" );
+	clynTexture = loadTexture( "images/clyn.png" );
+	//clynTexture2 = loadTexture( "/home/vova/incursion/clyn2.png" );
+	carTexture2 = loadTexture( "images/car2.png" );
+	carTexture = loadTexture( "images/car.png" );
+	menuTexture = loadTexture( "images/menu.png" );
 	if( gTexture == NULL )
 	{
 		printf( "Failed to load texture image!\n" );
 		success = false;
 	}
-
+/*
 	if( boomTexture == NULL )
 	{
 		printf( "Failed to load texture image!\n" );
 		success = false;
 	}
-
+*/
 	return success;
 }
+
 
 void close()
 {
@@ -668,3 +582,158 @@ void game2(){
 			//playerQuad.y = y;
 		//}
 */
+
+
+int main(int argc, char* args[]){
+	if( !init() )
+	{
+		printf( "Failed to initialize!\n" );
+	}
+	else
+	{
+		if( !loadMedia() )
+		{
+			printf( "Failed to load media!\n" );
+		}
+		else
+		{	
+			bool quit = false;
+
+			SDL_Event e;
+
+			while( !quit )
+			{				
+				switch(menu({"начать","skins","settings","exit"})){
+					case 0:
+						if(game()==-1){quit = true;}
+						break;
+					case 1:
+						skins();
+						break;
+					case 2:
+						settings();
+						break;
+
+					default:
+						quit = true;
+						break;
+				}
+			}
+		}
+	}
+	
+
+	close();
+
+	return 0;
+
+}
+
+struct MenuTexture{
+	SDL_Texture* mTexture;
+	int w, h;
+};
+
+MenuTexture mtf(TTF_Font* font, string item, SDL_Color textColor){
+		//Render text
+		SDL_Surface* textSurface = TTF_RenderUTF8_Solid( font, item.c_str(), textColor );
+		if( textSurface == NULL )
+		{
+			printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+		}
+
+		//Create texture from surface pixels
+		SDL_Texture* mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+		MenuTexture mt{mTexture,textSurface->w,textSurface->h};		
+		SDL_FreeSurface( textSurface );
+		if( mTexture == NULL )
+		{
+			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+		}
+		
+//		SDL_Rect renderQuad = { SCREEN_W/2-mWidth/2, c+=50, mWidth, mHeight };
+		return mt;	
+}
+
+int menu(const vector <string>& items){
+	int ans = 0;
+	SDL_Color textColor = { 0, 0, 0 };
+	SDL_Color selectedColor = { 10, 150, 10 };
+	vector <MenuTexture> menuTextures; 
+	if( TTF_Init() == -1 )
+	{
+		printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+		return -1;
+	}
+	
+	//TTF_Font* gFont = TTF_OpenFont( "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf", 35 );
+	TTF_Font* gFont = TTF_OpenFont( "fonts/Marske.ttf", 35 );
+
+    if( gFont == NULL )
+    {
+        printf( "Failed to load Floripa font! SDL_ttf Error: %s\n", TTF_GetError() );
+        return -1;
+    }
+	
+	bool quit = false;
+	
+	int ind = 0;
+	    
+	while( !quit )
+	{
+		int c = 100;
+		for(int i = 0; i<items.size();++i){
+			menuTextures.push_back(mtf(gFont,items[i], ind==i? selectedColor:textColor));
+		}
+		SDL_RenderCopy( gRenderer, menuTexture, NULL, NULL );
+		//SDL_RenderCopy( gRenderer, ufoTexture, NULL, &ufoQuad );
+		//Render to screen
+		for(int i = 0; i<menuTextures.size();++i){
+			SDL_Rect renderQuad = { SCREEN_W/2-menuTextures[i].w/2, c+=50, ind==i? menuTextures[i].w+7:menuTextures[i].w, ind==i? menuTextures[i].h+7:menuTextures[i].h };			
+			SDL_RenderCopyEx( gRenderer, menuTextures[i].mTexture, NULL, &renderQuad, 0, NULL, SDL_FLIP_NONE );
+			SDL_DestroyTexture(menuTextures[i].mTexture);
+		}
+		menuTextures.clear();
+		SDL_RenderPresent( gRenderer );
+		SDL_Event e;
+		while( SDL_PollEvent( &e ) != 0 && !quit)
+		{
+			if( e.type == SDL_QUIT ){
+				ans = -2;
+				quit = true;
+				break;
+			}																						
+			else if(e.type == SDL_KEYDOWN && e.key.repeat == 0){
+				switch( e.key.keysym.sym )
+				{
+					case SDLK_w:
+					case SDLK_UP:
+						if(--ind<0){
+							ind = items.size()-1;
+						}
+					break;
+
+					case SDLK_s:
+					case SDLK_DOWN:
+						if(++ind>=items.size()){
+							ind = 0;
+						}
+					break;
+					
+					case SDLK_SPACE:
+						ans = ind;
+						quit = true;
+					break;
+					
+					case SDLK_ESCAPE:
+						ans = -2;
+						quit = true;
+						break;
+				}
+			}
+		}
+	}
+	TTF_CloseFont(gFont);
+	return ans;
+}
+
