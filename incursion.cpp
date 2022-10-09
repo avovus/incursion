@@ -8,6 +8,7 @@
 #include "lib/Mob.hpp"
 #include "lib/Player.hpp"
 #include "lib/Constants.hpp"
+#include "lib/Clyn.hpp"
 
 using namespace std;
 
@@ -27,58 +28,6 @@ SDL_Renderer* gRenderer = NULL;
 
 string vercion = "alpha 2.5";
 string creator = "Vovan kovan";
-
-class Clyn: public Mob{
-	private:
-		SDL_Rect quad = { 470, 21, 100, 150 }; //хидбокс клына
-		bool boom = false;
-		bool fly_up = true;
-		bool is_on = true;
-		int live = 20;
-		bool angry = false;
-		int step = 0;
-		SDL_Texture* texture = NULL;
-
-	public:
-		Clyn(int x, int y,SDL_Texture* texture){
-			this->texture = texture;
-			quad.x = x;
-			quad.y = y;
-		}
-
-		virtual ~Clyn() {}
-
-		virtual void move(){
-			if(fly_up){
-				if(quad.y >= 30){
-					step++;
-					if(step == 3){
-						quad.y -= 1;
-						step = 0;
-					}
-				}
-				else{
-					fly_up = false;
-				}
-			}
-			else{
-				if(quad.y+quad.h <= SCREEN_H-100){
-					step++;
-					if(step == 3){
-						quad.y += 1;
-						step = 0;
-					}
-				}
-				else{
-					fly_up = true;
-				}
-			}
-		}
-
-		virtual void render(){
-			SDL_RenderCopy( gRenderer, texture, NULL, &quad );
-		}
-};
 
 class Car: public Mob{
 	public:
@@ -377,9 +326,9 @@ void skins(){
 int game(){
 	vector <Mob*> mobs;
 
-	Player p(200,300,playerTexture);
-	mobs.push_back(new Clyn(50, 300, clynTexture));
-	mobs.push_back(new Clyn(350, 0, clynTexture));
+	Player p(200,300,gRenderer,playerTexture);
+	mobs.push_back(new Clyn(50, 300, gRenderer, clynTexture));
+	mobs.push_back(new Clyn(350, 0, gRenderer, clynTexture));
 	mobs.push_back(
 		new Car(600, SCREEN_H - Car::H - 35, -3, carTexture));
 	mobs.push_back(
