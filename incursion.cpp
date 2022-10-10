@@ -5,10 +5,12 @@
 #include <vector>
 #include <SDL2/SDL_ttf.h>
 
-#include "lib/Mob.hpp"
-#include "lib/Player.hpp"
 #include "lib/Constants.hpp"
+
+#include "lib/Player.hpp"
+#include "lib/Mob.hpp"
 #include "lib/Clyn.hpp"
+#include "lib/Car.hpp"
 
 using namespace std;
 
@@ -28,45 +30,6 @@ SDL_Renderer* gRenderer = NULL;
 
 string vercion = "alpha 2.5";
 string creator = "Vovan kovan";
-
-class Car: public Mob{
-	public:
-		const static int W = 80, H = 40;
-	private:
-		SDL_Rect quad = { 600, SCREEN_H-H-35, W, H };
-		bool boom = false;
-		bool is_on = true;
-		int live = 1;
-		int speedx = 0;
-		SDL_Texture* texture;
-	public:
-		Car(int x, int y, int speedx, SDL_Texture* carTexture){
-			texture = carTexture;
-			quad.x = x;
-			quad.y = y;
-			this->speedx = speedx;
-		}
-
-		virtual ~Car(){}
-
-		virtual void move(){
-			quad.x += speedx;
-			if(speedx < 0){
-				if(quad.x+quad.w <= 0){
-					quad.x = SCREEN_W+quad.w;
-				}
-			}
-			else{
-				if(quad.x >= SCREEN_W){
-					quad.x = 0;
-				}
-			}
-		}
-
-		virtual void render(){
-			SDL_RenderCopy( gRenderer, texture, NULL, &quad );
-		}
-};
 
 SDL_Texture* carTexture2 = NULL;
 SDL_Texture* lazerTexture = NULL;
@@ -330,9 +293,9 @@ int game(){
 	mobs.push_back(new Clyn(50, 300, gRenderer, clynTexture));
 	mobs.push_back(new Clyn(350, 0, gRenderer, clynTexture));
 	mobs.push_back(
-		new Car(600, SCREEN_H - Car::H - 35, -3, carTexture));
+		new Car(600, SCREEN_H - Car::H - 35, -3, gRenderer, carTexture));
 	mobs.push_back(
-		new Car(600, SCREEN_H - Car::H - 20, 4, carTexture2));
+		new Car(600, SCREEN_H - Car::H - 20, 4, gRenderer, carTexture2));
 
 	int ans = 0;
 	bool quit = false;
@@ -351,8 +314,6 @@ int game(){
 					case SDLK_ESCAPE:
 						switch(menu({"resume","exit"})){
 							case -2:
-								quit = true;
-								break;
 							case 0:
 								break;
 							default:
