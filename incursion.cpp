@@ -305,7 +305,6 @@ int game(){
 			{
 				quit = true;
 				ans = -1;
-//				close();
 			}
 
 			else if(e.type == SDL_KEYDOWN && e.key.repeat == 0 ){
@@ -410,15 +409,32 @@ int game(){
 		}
 		p.move();
 
-		for(int i = 0; i<mobs.size(); ++i){
+		for(int i = 0; i < mobs.size(); ++i){
 			(*mobs[i]).move();
 		}
 
+		for(int i = 0; i < mobs.size();++i){
+			if(p.isCollided(mobs[i])){
+				mobs[i]->destroy();
+				p.decrLives();
+			}
+		}
+
+		for(int i = mobs.size()-1; i>=0; --i){
+			if(mobs[i]->isDestroyed()){
+				mobs.erase(mobs.begin() + i);
+			}
+		}
+
 		SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
-//		SDL_RenderCopy( gRenderer, playerTexture, NULL, NULL );
 
 		for(int i = 0; i<mobs.size(); ++i){
 			mobs[i]->render();
+		}
+
+		if(!p.isAlive()){
+			ans = 1;
+			quit = true;
 		}
 
 		p.render();
@@ -505,13 +521,13 @@ int main(int argc, char* args[]){
 			printf( "Failed to load media!\n" );
 		}
 		else
-		{	
+		{
 			bool quit = false;
 
 			SDL_Event e;
 
 			while( !quit )
-			{				
+			{
 				switch(menu(
 					{"начать","skins","settings","exit"},
 					gRenderer,
@@ -534,7 +550,7 @@ int main(int argc, char* args[]){
 			}
 		}
 	}
-	
+
 
 	close();
 

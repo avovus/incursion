@@ -9,11 +9,13 @@
 
 using namespace std;
 
-Car::Car(int x, int y, int speedx, SDL_Renderer* gRenderer, SDL_Texture* carTexture){
+Car::Car(
+	int x, int y, int speedx,
+	SDL_Renderer* gRenderer, SDL_Texture* carTexture)
+	: Mob({ x, y, Car::W, Car::H })
+{
 	this->gRenderer = gRenderer;
 	texture = carTexture;
-	quad.x = x;
-	quad.y = y;
 	this->speedx = speedx;
 }
 

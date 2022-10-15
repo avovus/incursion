@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "Mob.hpp"
 #include "Player.hpp"
 #include "Constants.hpp"
 
@@ -18,6 +19,25 @@ Player::Player(
 	this->texture = texture;
 	quad.x = x;
 	quad.y = y;
+}
+
+bool Player::isCollided(Mob* mob){
+	SDL_Rect q = mob->getQuad();
+	if((quad.x+quad.w >= q.x+5 &&
+		quad.x <= q.x+q.w-5 &&
+		quad.y+quad.h >= q.y+5 &&
+		quad.y <= q.y+q.h-5)) {
+		return true;
+	}
+	return false;
+}
+
+void Player::decrLives(){
+	lives--;
+}
+
+bool Player::isAlive(){
+	return lives > 0;
 }
 
 void Player::move() {

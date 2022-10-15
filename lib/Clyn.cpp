@@ -9,11 +9,11 @@
 
 using namespace std;
 
-Clyn::Clyn(int x, int y,SDL_Renderer* gRenderer,SDL_Texture* texture){
+Clyn::Clyn(int x, int y, SDL_Renderer* gRenderer, SDL_Texture* texture)
+	: Mob({ x, y, 100, 150 })
+{
 	this->gRenderer = gRenderer;
 	this->texture = texture;
-	quad.x = x;
-	quad.y = y;
 }
 
 void Clyn::move(){
