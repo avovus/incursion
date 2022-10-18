@@ -8,10 +8,12 @@
 #include "lib/Constants.hpp"
 #include "lib/Menu.hpp"
 
+#include "lib/TicTacToe.hpp"
 #include "lib/Player.hpp"
 #include "lib/Mob.hpp"
 #include "lib/Clyn.hpp"
 #include "lib/Car.hpp"
+#include "lib/Copter.hpp"
 
 using namespace std;
 
@@ -27,6 +29,8 @@ SDL_Window* gWindow = NULL;
 
 SDL_Renderer* gRenderer = NULL;
 
+SDL_Texture* fieldTexture = NULL;
+SDL_Texture* copterTexture = NULL;
 SDL_Texture* carTexture2 = NULL;
 SDL_Texture* clynTexture = NULL;
 SDL_Texture* carTexture = NULL;
@@ -98,6 +102,8 @@ bool loadMedia()
 	bool success = true;
 	playerTexture = loadTexture( "images/ship.png" );
 	gTexture = loadTexture( "images/city2.png" );
+	copterTexture = loadTexture( "images/copter.png" );
+	fieldTexture = loadTexture( "images/ticTacToe.png" );
 	clynTexture = loadTexture( "images/clyn.png" );
 	carTexture2 = loadTexture( "images/car2.png" );
 	carTexture = loadTexture( "images/car.png" );
@@ -160,7 +166,7 @@ SDL_Texture* loadTexture( std::string path )
 void settings(){
 }
 
-void skins(){
+int skins(){
 	cout<<"in skins"<<endl;
 }
 
@@ -168,6 +174,8 @@ int game(){
 	vector <Mob*> mobs;
 
 	Player p(200,300,gRenderer,playerTexture);
+	mobs.push_back(new Copter(200, 50, 1, 1, gRenderer, copterTexture));
+	mobs.push_back(new Copter(500, 150, 0, -1, gRenderer, copterTexture));
 	mobs.push_back(new Clyn(50, 300, gRenderer, clynTexture));
 	mobs.push_back(new Clyn(350, 0, gRenderer, clynTexture));
 	mobs.push_back(
@@ -189,7 +197,7 @@ int game(){
 			else if(e.type == SDL_KEYDOWN && e.key.repeat == 0 ){
 				switch(e.key.keysym.sym){
 					case SDLK_ESCAPE:
-						switch(menu({"resume","exit"}, gRenderer, menuTexture)){
+						switch(menu({"продолжить","выход"}, gRenderer, menuTexture)){
 							case -2:
 							case 0:
 								break;
@@ -313,20 +321,19 @@ int main(int argc, char* args[]){
 			while( !quit )
 			{
 				switch(menu(
-					{"начать","skins","settings","exit"},
+					{"крестики-нолики","начать","настройки","выход"},
 					gRenderer,
 					menuTexture))
 				{
 					case 0:
-						if(game()==-1){quit = true;}
+						ticTacToe(gRenderer,menuTexture,fieldTexture);
 						break;
 					case 1:
-						skins();
+						if(game()==-1){quit = true;}
 						break;
 					case 2:
 						settings();
 						break;
-
 					default:
 						quit = true;
 						break;
