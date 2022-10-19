@@ -8,7 +8,7 @@ class Player{
 		SDL_Renderer* gRenderer = NULL;
 		SDL_Texture* texture = NULL;
 		int lives = 3;
-		const static int W = 80, H = 50, SPEED = 1;
+		const static int W = 65, H = 50, SPEED = 1;
 		int speedX = 0;
 		int speedY = 0;
 	public:

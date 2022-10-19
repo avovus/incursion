@@ -115,6 +115,8 @@ int menu(
 					break;
 
 					case SDLK_SPACE:
+					case SDLK_RETURN:
+					case SDLK_RETURN2:
 						ans = ind;
 						quit = true;
 					break;

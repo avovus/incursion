@@ -30,7 +30,14 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 SDL_Texture* fieldTexture = NULL;
+SDL_Texture* x1Texture = NULL;
+SDL_Texture* xTexture = NULL;
+SDL_Texture* oTexture = NULL;
 SDL_Texture* copterTexture = NULL;
+SDL_Texture* planeTexture = NULL;
+SDL_Texture* copterTexture2 = NULL;
+SDL_Texture* copterTexture3 = NULL;
+SDL_Texture* copterTexture4 = NULL;
 SDL_Texture* carTexture2 = NULL;
 SDL_Texture* clynTexture = NULL;
 SDL_Texture* carTexture = NULL;
@@ -100,10 +107,17 @@ bool init()
 bool loadMedia()
 {
 	bool success = true;
-	playerTexture = loadTexture( "images/ship.png" );
+	playerTexture = loadTexture( "images/pngship.png" );
 	gTexture = loadTexture( "images/city2.png" );
 	copterTexture = loadTexture( "images/copter.png" );
+	planeTexture = loadTexture( "images/plane.png" );
+	copterTexture2 = loadTexture( "images/copter2.png" );
+	copterTexture3 = loadTexture( "images/copter3.png" );
+	copterTexture4 = loadTexture( "images/copter4.png" );
 	fieldTexture = loadTexture( "images/ticTacToe.png" );
+	x1Texture = loadTexture( "images/x1.png" );
+	xTexture = loadTexture( "images/x.png" );
+	oTexture = loadTexture( "images/o.png" );
 	clynTexture = loadTexture( "images/clyn.png" );
 	carTexture2 = loadTexture( "images/car2.png" );
 	carTexture = loadTexture( "images/car.png" );
@@ -171,17 +185,14 @@ int skins(){
 }
 
 int game(){
+	int i = 5;
+	int sec = 0;
+	long long timer = 0;
 	vector <Mob*> mobs;
 
 	Player p(200,300,gRenderer,playerTexture);
-	mobs.push_back(new Copter(200, 50, 1, 1, gRenderer, copterTexture));
-	mobs.push_back(new Copter(500, 150, 0, -1, gRenderer, copterTexture));
-	mobs.push_back(new Clyn(50, 300, gRenderer, clynTexture));
-	mobs.push_back(new Clyn(350, 0, gRenderer, clynTexture));
-	mobs.push_back(
-		new Car(600, SCREEN_H - Car::H - 35, -3, gRenderer, carTexture));
-	mobs.push_back(
-		new Car(600, SCREEN_H - Car::H - 20, 4, gRenderer, carTexture2));
+	mobs.push_back(new Copter(450, -50, 1, 2, gRenderer, copterTexture));
+	mobs.push_back(new Copter(-500, 150, 0, -1, gRenderer, copterTexture2, 100, 400));
 
 	int ans = 0;
 	bool quit = false;
@@ -231,6 +242,8 @@ int game(){
 						break;
 
 					case SDLK_SPACE:
+					case SDLK_RETURN:
+					case SDLK_RETURN2:
 						break;
 				}
 			}
@@ -259,6 +272,35 @@ int game(){
 				}
 			}
 		}
+
+		if(timer == 5 && i == 5){
+			mobs.push_back(
+				new Car(600, SCREEN_H - Car::H - 20, 3, gRenderer, carTexture2));
+			mobs.push_back(new Copter(-500, 60, 0, -3, gRenderer, planeTexture, 0, 90));
+			i+=5;
+		}
+
+		if(timer == 10 && i == 10){
+			mobs.push_back(new Copter(-100, 150, 0, 2, gRenderer, copterTexture3, 100, 400));
+			i+=5;
+		}
+
+		if(timer == 15 && i == 15){
+			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 100, 400));
+			i+=5;
+		}
+
+		if(timer == 20 && i == 20){
+			mobs.push_back(
+				new Car(600, SCREEN_H - Car::H - 35, -2, gRenderer, carTexture));
+			i+=10;
+		}
+
+		if(timer == 30 && i == 30){
+			mobs.push_back(new Clyn(200, -160, gRenderer, clynTexture));
+			i+=5;
+		}
+
 		p.move();
 
 		for(int i = 0; i < mobs.size(); ++i){
@@ -291,6 +333,11 @@ int game(){
 
 		p.render();
 
+		sec += 1;
+		if(sec == 200){
+			timer+=1;
+			sec = 0;
+		}
 		SDL_RenderPresent( gRenderer );
 		SDL_Delay(5);
 	}
@@ -326,7 +373,19 @@ int main(int argc, char* args[]){
 					menuTexture))
 				{
 					case 0:
-						ticTacToe(gRenderer,menuTexture,fieldTexture);
+						switch(ticTacToe(gRenderer,menuTexture,fieldTexture, x1Texture, xTexture, oTexture)){
+							case 0:
+							break;
+							case 1:
+							break;
+							case -1:
+							break;
+							case -2:
+								quit = true;
+							break;
+							default:
+							break;
+						}
 						break;
 					case 1:
 						if(game()==-1){quit = true;}
