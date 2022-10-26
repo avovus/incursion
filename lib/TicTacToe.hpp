@@ -2,11 +2,10 @@
 #define TICTACTOE_HPP
 #include <string>
 #include <vector>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 using namespace std;
-
-void draw(SDL_Rect tQuad, SDL_Texture* dTexture,
-	SDL_Texture* fieldTexture, SDL_Renderer* gRenderer);
 
 int ticTacToe(SDL_Renderer* gRenderer, SDL_Texture* tTexture,
 	SDL_Texture* fieldTexture, SDL_Texture* x1Texture,

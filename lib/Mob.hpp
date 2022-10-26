@@ -13,6 +13,11 @@ class Mob{
 		};
 		virtual void move() = 0;
 		virtual void render() = 0;
+
+		virtual Mob* spawnChild(SDL_Texture* childTexture,long long timer, int sec){
+			return NULL;
+		}
+
 		SDL_Rect getQuad(){
 			return quad;
 		}

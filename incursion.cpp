@@ -14,6 +14,7 @@
 #include "lib/Clyn.hpp"
 #include "lib/Car.hpp"
 #include "lib/Copter.hpp"
+#include "lib/Rocket.hpp"
 
 using namespace std;
 
@@ -34,6 +35,7 @@ SDL_Texture* x1Texture = NULL;
 SDL_Texture* xTexture = NULL;
 SDL_Texture* oTexture = NULL;
 SDL_Texture* copterTexture = NULL;
+SDL_Texture* copterTexture5 = NULL;
 SDL_Texture* planeTexture = NULL;
 SDL_Texture* copterTexture2 = NULL;
 SDL_Texture* copterTexture3 = NULL;
@@ -42,6 +44,7 @@ SDL_Texture* carTexture2 = NULL;
 SDL_Texture* clynTexture = NULL;
 SDL_Texture* carTexture = NULL;
 SDL_Texture* boomTexture = NULL;
+SDL_Texture* rocketTexture = NULL;
 SDL_Texture* gTexture = NULL;
 SDL_Texture* playerTexture = NULL;
 SDL_Texture* menuTexture = NULL;
@@ -107,13 +110,15 @@ bool init()
 bool loadMedia()
 {
 	bool success = true;
-	playerTexture = loadTexture( "images/pngship.png" );
+	rocketTexture = loadTexture( "images/rocket.png" );
+	playerTexture = loadTexture( "images/ship.png" );
 	gTexture = loadTexture( "images/city2.png" );
-	copterTexture = loadTexture( "images/copter.png" );
+	copterTexture = loadTexture( "images/copter4.png" );
 	planeTexture = loadTexture( "images/plane.png" );
 	copterTexture2 = loadTexture( "images/copter2.png" );
 	copterTexture3 = loadTexture( "images/copter3.png" );
-	copterTexture4 = loadTexture( "images/copter4.png" );
+	copterTexture4 = loadTexture( "images/copter.png" );
+	copterTexture5 = loadTexture( "images/copterZ.png" );
 	fieldTexture = loadTexture( "images/ticTacToe.png" );
 	x1Texture = loadTexture( "images/x1.png" );
 	xTexture = loadTexture( "images/x.png" );
@@ -185,14 +190,19 @@ int skins(){
 }
 
 int game(){
-	int i = 5;
 	int sec = 0;
 	long long timer = 0;
 	vector <Mob*> mobs;
+	SDL_Rect livesQuad;
+	livesQuad.w = 45;
+	livesQuad.h = 27;
+	livesQuad.x = -livesQuad.w;
+	livesQuad.y = 0;
+	SDL_Rect lQuad = livesQuad;
 
 	Player p(200,300,gRenderer,playerTexture);
-	mobs.push_back(new Copter(450, -50, 1, 2, gRenderer, copterTexture));
-	mobs.push_back(new Copter(-500, 150, 0, -1, gRenderer, copterTexture2, 100, 400));
+	mobs.push_back(new Copter(450, -50, 1, 2, gRenderer, copterTexture, timer, true));
+	mobs.push_back(new Copter(-500, 150, 0, -1, gRenderer, copterTexture2, 0, false, 0, 550));
 
 	int ans = 0;
 	bool quit = false;
@@ -273,32 +283,38 @@ int game(){
 			}
 		}
 
-		if(timer == 5 && i == 5){
+		if(timer == 5 && !sec){
 			mobs.push_back(
 				new Car(600, SCREEN_H - Car::H - 20, 3, gRenderer, carTexture2));
-			mobs.push_back(new Copter(-500, 60, 0, -3, gRenderer, planeTexture, 0, 90));
-			i+=5;
+			mobs.push_back(new Copter(-500, 60, 0, -3, gRenderer, planeTexture, 0, false, 0, 200));
 		}
 
-		if(timer == 10 && i == 10){
-			mobs.push_back(new Copter(-100, 150, 0, 2, gRenderer, copterTexture3, 100, 400));
-			i+=5;
+		if(timer == 10 && !sec){
+			mobs.push_back(new Copter(-100, 150, 0, 2, gRenderer, copterTexture3, 0, false, 0, 550));
 		}
 
-		if(timer == 15 && i == 15){
-			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 100, 400));
-			i+=5;
+		if(timer == 15 && !sec){
+			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 0, false, 0, 550));
 		}
 
-		if(timer == 20 && i == 20){
+		if(timer == 20 && !sec){
 			mobs.push_back(
 				new Car(600, SCREEN_H - Car::H - 35, -2, gRenderer, carTexture));
-			i+=10;
 		}
 
-		if(timer == 30 && i == 30){
+		if(timer == 30 && !sec){
+			mobs.push_back(new Copter(-500, 160, 0, 2, gRenderer, copterTexture5, 0, false, 0, 550));
+		}
+
+		if(timer == 40 && !sec){
 			mobs.push_back(new Clyn(200, -160, gRenderer, clynTexture));
-			i+=5;
+		}
+
+		for(int i = 0; i < mobs.size();++i){
+			Mob* c = mobs[i]->spawnChild(rocketTexture,timer,sec);
+			if(c != NULL){
+				mobs.push_back(c);
+			}
 		}
 
 		p.move();
@@ -322,6 +338,14 @@ int game(){
 
 		SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
 
+		for(int i = 0; i < p.lives; ++i){
+			livesQuad.x = livesQuad.x+livesQuad.w;
+			SDL_RenderCopy( gRenderer, playerTexture, NULL, &livesQuad );
+		}
+
+		livesQuad = lQuad;
+
+
 		for(int i = 0; i<mobs.size(); ++i){
 			mobs[i]->render();
 		}
@@ -337,6 +361,7 @@ int game(){
 		if(sec == 200){
 			timer+=1;
 			sec = 0;
+			cout << timer << endl;
 		}
 		SDL_RenderPresent( gRenderer );
 		SDL_Delay(5);

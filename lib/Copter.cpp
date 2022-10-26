@@ -7,23 +7,49 @@
 #include <stdlib.h>
 
 #include "Copter.hpp"
+#include "Rocket.hpp"
 #include "Constants.hpp"
+#include "Player.hpp"
 
 using namespace std;
 
 Copter::Copter(
 	int x, int y, bool direction, int speed,
-	SDL_Renderer* gRenderer, SDL_Texture* copterTexture,int randMin, int randMax)
+	SDL_Renderer* gRenderer, SDL_Texture* copterTexture,int timer,
+	bool needSpawnChild, int randMin, int randMax)
 	: Mob({ x, y, Copter::W, Copter::H })
 {
+	this->timer = timer;
 	this->randMax = randMax;
 	this->randMin = randMin;
 	this->direction = direction;
 	this->gRenderer = gRenderer;
-	texture = copterTexture;
 	this->speed = speed;
+	this->playerY = playerY;
+	this->needSpawnChild = needSpawnChild;
+	texture = copterTexture;
 }
 
+Mob* Copter::spawnChild(SDL_Texture* childTexture, long long timer,int sec){
+	if(needSpawnChild){
+		if(timer <= 45){
+			if(!sec && timer%5 == 0){
+				return new Rocket(quad.x, quad.y+10, -3, gRenderer, childTexture);
+			}
+		}
+		else if(timer <= 90){
+			if(!sec && timer%3 == 0){
+				return new Rocket(quad.x, quad.y+10, -3, gRenderer, childTexture);
+			}
+		}
+		else{
+			if(!sec && timer%2 == 0){
+				return new Rocket(quad.x, quad.y+10, -3, gRenderer, childTexture);
+			}
+		}
+	}
+	return NULL;
+}
 
 void Copter::moveVer(){
 	if(fly_up){

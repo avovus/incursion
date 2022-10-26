@@ -4,14 +4,14 @@
 
 class Player{
 	private:
-		SDL_Rect quad = { 200, 300, W, H }; //хидбокс игрока
 		SDL_Renderer* gRenderer = NULL;
 		SDL_Texture* texture = NULL;
-		int lives = 3;
-		const static int W = 65, H = 50, SPEED = 1;
+		const static int W = 70, H = 45, SPEED = 1;
 		int speedX = 0;
 		int speedY = 0;
 	public:
+		int lives = 3;
+		SDL_Rect quad = { 200, 300, W, H }; //хидбокс игрока
 		Player(
 			int, int,
 			SDL_Renderer*,
