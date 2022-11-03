@@ -269,7 +269,7 @@ int ticTacToe(SDL_Renderer* gRenderer, SDL_Texture* tTexture,
 			}
 			SDL_RenderPresent( gRenderer );
 			quit = true;
-			SDL_Delay(2500);
+			SDL_Delay(1000);
 		}
 
 		SDL_RenderPresent( gRenderer );

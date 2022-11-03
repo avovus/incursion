@@ -15,6 +15,7 @@
 #include "lib/Car.hpp"
 #include "lib/Copter.hpp"
 #include "lib/Rocket.hpp"
+#include "lib/Mod.hpp"
 
 using namespace std;
 
@@ -48,6 +49,7 @@ SDL_Texture* rocketTexture = NULL;
 SDL_Texture* gTexture = NULL;
 SDL_Texture* playerTexture = NULL;
 SDL_Texture* menuTexture = NULL;
+SDL_Texture* modTexture = NULL;
 
 bool init()
 {
@@ -113,7 +115,7 @@ bool loadMedia()
 	rocketTexture = loadTexture( "images/rocket.png" );
 	playerTexture = loadTexture( "images/ship.png" );
 	gTexture = loadTexture( "images/city2.png" );
-	copterTexture = loadTexture( "images/copter4.png" );
+	copterTexture = loadTexture( "images/copter4R3.png" );
 	planeTexture = loadTexture( "images/plane.png" );
 	copterTexture2 = loadTexture( "images/copter2.png" );
 	copterTexture3 = loadTexture( "images/copter3.png" );
@@ -126,6 +128,7 @@ bool loadMedia()
 	clynTexture = loadTexture( "images/clyn.png" );
 	carTexture2 = loadTexture( "images/car2.png" );
 	carTexture = loadTexture( "images/car.png" );
+	modTexture = loadTexture( "images/mod.png" );
 	menuTexture = loadTexture( "images/menu.png" );
 	if( gTexture == NULL )
 	{
@@ -189,19 +192,224 @@ int skins(){
 	cout<<"in skins"<<endl;
 }
 
-int game(){
+int gameMod1(){
 	int sec = 0;
 	long long timer = 0;
 	vector <Mob*> mobs;
 	SDL_Rect livesQuad;
 	livesQuad.w = 45;
-	livesQuad.h = 27;
+	livesQuad.h = 29;
 	livesQuad.x = -livesQuad.w;
 	livesQuad.y = 0;
 	SDL_Rect lQuad = livesQuad;
 
 	Player p(200,300,gRenderer,playerTexture);
-	mobs.push_back(new Copter(450, -50, 1, 2, gRenderer, copterTexture, timer, true));
+
+	mobs.push_back(
+		new Car(600, SCREEN_H - Car::H - 35, -2, gRenderer, carTexture));
+
+	int ans = 0;
+	bool quit = false;
+	SDL_Event e;
+	while(!quit){
+		while( SDL_PollEvent( &e ) != 0 ){
+			if( e.type == SDL_QUIT )
+			{
+				quit = true;
+				ans = -1;
+			}
+
+			else if(e.type == SDL_KEYDOWN && e.key.repeat == 0 ){
+				switch(e.key.keysym.sym){
+					case SDLK_ESCAPE:
+						switch(menu({"продолжить","выход"}, gRenderer, menuTexture)){
+							case -2:
+							case 0:
+								break;
+							default:
+								ans = 0;
+								quit = true;
+						}
+						break;
+
+					case SDLK_w:
+					case SDLK_UP:
+						p.speedYDown();
+						break;
+
+					case SDLK_s:
+					case SDLK_DOWN:
+						p.speedYUp();
+						break;
+
+					case SDLK_a:
+					case SDLK_LEFT:
+						p.speedXDown();
+						break;
+
+					case SDLK_d:
+					case SDLK_RIGHT:
+						p.speedXUp();
+						break;
+
+					case SDLK_F1:
+						break;
+
+					case SDLK_SPACE:
+					case SDLK_RETURN:
+					case SDLK_RETURN2:
+						break;
+				}
+			}
+
+			else if(e.type == SDL_KEYUP && e.key.repeat == 0 ){
+				switch(e.key.keysym.sym){
+					case SDLK_w:
+					case SDLK_UP:
+						p.speedYUp();
+						break;
+
+					case SDLK_s:
+					case SDLK_DOWN:
+						p.speedYDown();
+						break;
+
+					case SDLK_a:
+					case SDLK_LEFT:
+						p.speedXUp();
+						break;
+
+					case SDLK_d:
+					case SDLK_RIGHT:
+						p.speedXDown();
+						break;
+				}
+			}
+		}
+
+		if(timer == 5 && !sec){
+			mobs.push_back(new Copter(-500, 150, 0, -1, gRenderer, copterTexture2, 0, false, 0, 550));
+
+		}
+
+		if(timer == 10 && !sec){
+			mobs.push_back(new Copter(-100, 150, 0, 2, gRenderer, copterTexture3, 0, false, 0, 550));
+		}
+
+		if(timer == 15 && !sec){
+			mobs.push_back(new Copter(430, -50, 1, 2, gRenderer, copterTexture, timer, true));
+			mobs.push_back(
+				new Car(600, SCREEN_H - Car::H - 20, 3, gRenderer, carTexture2));
+			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 0, false, 0, 550));
+		}
+
+		if(timer == 20 && !sec){
+		}
+
+		if(timer == 30 && !sec){
+			mobs.push_back(new Copter(-500, 160, 0, 2, gRenderer, copterTexture5, 0, false, 0, 550));
+		}
+
+		if(timer == 40 && !sec){
+			mobs.push_back(new Copter(-500, 60, 0, -3, gRenderer, planeTexture, 0, false, 0, 200));
+		}
+
+		if(timer%30 == 0 && !sec && timer != 0){
+			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, modTexture));
+		}
+
+	if(timer == 60 && !sec){
+			switch(ticTacToe(gRenderer,menuTexture,fieldTexture, x1Texture, xTexture, oTexture)){
+				case 0:
+				break;
+				case 1:
+				break;
+				case -1:
+				break;
+				case -2:
+					quit = true;
+				break;
+				default:
+				break;
+			}
+	}
+
+		for(int i = 0; i < mobs.size();++i){
+			Mob* c = mobs[i]->spawnChild(rocketTexture,timer,sec);
+			if(c != NULL){
+				mobs.push_back(c);
+			}
+		}
+
+		p.move();
+
+		for(int i = 0; i < mobs.size(); ++i){
+			(*mobs[i]).move();
+		}
+
+		for(int i = 0; i < mobs.size();++i){
+			if(p.isCollided(mobs[i])){
+				mobs[i]->destroy();
+				p.changeLives(mobs[i]->amountLivesToChange());
+			}
+		}
+
+		for(int i = mobs.size()-1; i>=0; --i){
+			if(mobs[i]->isDestroyed()){
+				mobs.erase(mobs.begin() + i);
+			}
+		}
+
+		SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
+
+		for(int i = 0; i < p.lives; ++i){
+			livesQuad.x = livesQuad.x+livesQuad.w;
+			SDL_RenderCopy( gRenderer, playerTexture, NULL, &livesQuad );
+		}
+
+		livesQuad = lQuad;
+
+
+		for(int i = 0; i<mobs.size(); ++i){
+			mobs[i]->render();
+		}
+
+		if(!p.isAlive()){
+			ans = 1;
+			quit = true;
+		}
+
+		p.render();
+
+		sec += 1;
+		if(sec == 200){
+			timer+=1;
+			sec = 0;
+			cout << timer << endl;
+		}
+		SDL_RenderPresent( gRenderer );
+		SDL_Delay(5);
+	}
+
+	for(int i = 0; i<mobs.size(); ++i){
+		delete mobs[i];
+	}
+	return ans;
+}
+
+int gameMod2(){
+	int sec = 0;
+	long long timer = 0;
+	vector <Mob*> mobs;
+	SDL_Rect livesQuad;
+	livesQuad.w = 45;
+	livesQuad.h = 29;
+	livesQuad.x = -livesQuad.w;
+	livesQuad.y = 0;
+	SDL_Rect lQuad = livesQuad;
+
+	Player p(200,300,gRenderer,playerTexture);
+	mobs.push_back(new Copter(430, -50, 1, 2, gRenderer, copterTexture, timer, true));
 	mobs.push_back(new Copter(-500, 150, 0, -1, gRenderer, copterTexture2, 0, false, 0, 550));
 
 	int ans = 0;
@@ -289,27 +497,31 @@ int game(){
 			mobs.push_back(new Copter(-500, 60, 0, -3, gRenderer, planeTexture, 0, false, 0, 200));
 		}
 
-		if(timer == 10 && !sec){
+		if((timer == 10 || (timer%40 == 0 && timer>60)) && !sec){
 			mobs.push_back(new Copter(-100, 150, 0, 2, gRenderer, copterTexture3, 0, false, 0, 550));
 		}
 
-		if(timer == 15 && !sec){
+		if((timer == 15 || (timer%40 == 0 && timer>40)) && !sec){
 			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 0, false, 0, 550));
 		}
 
-		if(timer == 20 && !sec){
+		if((timer == 20 || (timer%40 == 0 && timer>60)) && !sec){
 			mobs.push_back(
 				new Car(600, SCREEN_H - Car::H - 35, -2, gRenderer, carTexture));
 		}
 
-		if(timer == 30 && !sec){
+		if((timer == 30 || (timer%40 == 0 && timer>40)) && !sec){
 			mobs.push_back(new Copter(-500, 160, 0, 2, gRenderer, copterTexture5, 0, false, 0, 550));
 		}
 
-		if(timer == 40 && !sec){
-			mobs.push_back(new Clyn(200, -160, gRenderer, clynTexture));
+		if(timer%30 == 0 && timer >=30 && !sec){
+			mobs.push_back(new Copter(-500, 150, 0, -2, gRenderer, copterTexture2, 0, false, 0, 550));
 		}
 
+		if(timer%30 == 0 && !sec && timer != 0){
+			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, modTexture));
+		}
+		
 		for(int i = 0; i < mobs.size();++i){
 			Mob* c = mobs[i]->spawnChild(rocketTexture,timer,sec);
 			if(c != NULL){
@@ -326,7 +538,7 @@ int game(){
 		for(int i = 0; i < mobs.size();++i){
 			if(p.isCollided(mobs[i])){
 				mobs[i]->destroy();
-				p.decrLives();
+				p.changeLives(mobs[i]->amountLivesToChange());
 			}
 		}
 
@@ -393,7 +605,7 @@ int main(int argc, char* args[]){
 			while( !quit )
 			{
 				switch(menu(
-					{"крестики-нолики","начать","настройки","выход"},
+					{"крестики-нолики","классика","выживание","настройки","выход"},
 					gRenderer,
 					menuTexture))
 				{
@@ -413,9 +625,12 @@ int main(int argc, char* args[]){
 						}
 						break;
 					case 1:
-						if(game()==-1){quit = true;}
+						if(gameMod1()==-1){quit = true;}
 						break;
 					case 2:
+						if(gameMod2()==-1){quit = true;}
+						break;
+					case 3:
 						settings();
 						break;
 					default:

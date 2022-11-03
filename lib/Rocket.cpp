@@ -23,7 +23,7 @@ Rocket::Rocket(
 
 
 void Rocket::move(){
-	if(quad.y+quad.h <= SCREEN_H-100){
+	if(quad.x+quad.w > 0){
 			quad.x += speed;
 	}
 	else{

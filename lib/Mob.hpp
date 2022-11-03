@@ -18,6 +18,9 @@ class Mob{
 			return NULL;
 		}
 
+		virtual int amountLivesToChange(){
+			return -1;
+		}
 		SDL_Rect getQuad(){
 			return quad;
 		}

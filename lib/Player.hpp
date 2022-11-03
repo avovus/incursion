@@ -19,7 +19,7 @@ class Player{
 		);
 		bool isAlive();
 		bool isCollided(Mob*);
-		void decrLives();
+		void changeLives(int numLives);
 		void move();
 		void speedYUp();
 		void speedYDown();

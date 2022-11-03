@@ -32,8 +32,8 @@ bool Player::isCollided(Mob* mob){
 	return false;
 }
 
-void Player::decrLives(){
-	lives--;
+void Player::changeLives(int numLives){
+	lives += numLives;
 }
 
 bool Player::isAlive(){
