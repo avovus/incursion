@@ -5,6 +5,7 @@
 class Mob{
 	private:
 		bool isAlive = true;
+		int c = 0;
 	protected:
 		SDL_Rect quad;
 	public:
@@ -21,15 +22,28 @@ class Mob{
 		virtual int amountLivesToChange(){
 			return -1;
 		}
+
 		SDL_Rect getQuad(){
 			return quad;
 		}
+
+/*
+		SDL_Rect getQuadPtr(){
+			return &quad;
+		}
+*/
+
 		void destroy(){
-			isAlive = false;
+//			c++;
+//			if(c == 10){
+				isAlive = false;
+//				c = 0;
+//			}
 		}
 		bool isDestroyed(){
 			return !isAlive;
 		}
+
 		virtual ~Mob() {};
 };
 

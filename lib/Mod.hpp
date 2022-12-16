@@ -7,7 +7,7 @@
 
 class Mod: public Mob{
 	public:
-		const static int W = 30, H = 30;
+		const static int W = 40, H = 40;
 	private:
 		SDL_Renderer* gRenderer = NULL;
 		int speed = 0;

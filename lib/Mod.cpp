@@ -28,7 +28,11 @@ int Mod::amountLivesToChange(){
 }
 
 void Mod::move(){
-	quad.x -= speed;
+	step++;
+	if(step == 2){
+		quad.x -= speed;
+		step = 0;
+	}
 	if(quad.x+quad.w <= 0){
 		destroy();
 	}

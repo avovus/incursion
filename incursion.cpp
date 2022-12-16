@@ -128,8 +128,9 @@ bool loadMedia()
 	clynTexture = loadTexture( "images/clyn.png" );
 	carTexture2 = loadTexture( "images/car2.png" );
 	carTexture = loadTexture( "images/car.png" );
-	modTexture = loadTexture( "images/mod.png" );
+	modTexture = loadTexture( "images/mod1.png" );
 	menuTexture = loadTexture( "images/menu.png" );
+	boomTexture = loadTexture( "images/boom.png" );
 	if( gTexture == NULL )
 	{
 		printf( "Failed to load texture image!\n" );
@@ -349,6 +350,10 @@ int gameMod1(){
 
 		for(int i = 0; i < mobs.size();++i){
 			if(p.isCollided(mobs[i])){
+				SDL_Rect quad = mobs[i]->getQuad();
+				SDL_RenderCopy( gRenderer, boomTexture, NULL, &quad);
+				SDL_RenderPresent(gRenderer);
+				SDL_Delay(100);
 				mobs[i]->destroy();
 				p.changeLives(mobs[i]->amountLivesToChange());
 			}
