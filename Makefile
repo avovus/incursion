@@ -1,5 +1,5 @@
-all: Player.o Clyn.o Car.o Copter.o TicTacToe.o Menu.o Rocket.o Mod.o
-	g++ incursion.cpp -w -lSDL2 -lSDL2_image -o incursion lib/Player.o lib/Clyn.o lib/Car.o lib/Copter.o lib/Menu.o lib/TicTacToe.o lib/Rocket.o lib/Mod.o -lSDL2_ttf
+all: Player.o Clyn.o Car.o Copter.o TicTacToe.o Menu.o Rocket.o Mod.o Explosion.o
+	g++ incursion.cpp -w -lSDL2 -lSDL2_image -o incursion lib/Player.o lib/Clyn.o lib/Car.o lib/Copter.o lib/Menu.o lib/TicTacToe.o lib/Rocket.o lib/Mod.o lib/Explosion.o -lSDL2_ttf
 
 test:
 	g++ test.cpp -w -o test  -lSDL2 -lSDL2_image
@@ -27,6 +27,9 @@ Rocket.o:
 
 Mod.o:
 	g++ -c -o lib/Mod.o lib/Mod.cpp -Ilib
+
+Explosion.o:
+	g++ -c -o lib/Explosion.o lib/Explosion.cpp -Ilib
 
 clean:
 	rm -f incursion

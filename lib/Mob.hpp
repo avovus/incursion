@@ -19,6 +19,14 @@ class Mob{
 			return NULL;
 		}
 
+		virtual bool isCollidable(){
+			return true;
+		}
+
+		virtual bool needBoom(){
+			return true;
+		}
+
 		virtual int amountLivesToChange(){
 			return -1;
 		}

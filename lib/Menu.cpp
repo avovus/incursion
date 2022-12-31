@@ -49,12 +49,6 @@ int menu(
 	SDL_Color textColor = { 0, 0, 0 };
 	SDL_Color selectedColor = { 10, 150, 10 };
 	vector <MenuTexture> menuTextures;
-	if( TTF_Init() == -1 )
-	{
-		printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n",
-			TTF_GetError() );
-		return -1;
-	}
 
 	TTF_Font* gFont = TTF_OpenFont( "fonts/Marske.ttf", 35 );
 

@@ -227,7 +227,7 @@ int ticTacToe(SDL_Renderer* gRenderer, SDL_Texture* tTexture,
 					break;
 
 					case SDLK_ESCAPE:
-						ans = -1;
+						ans = -3;
 						quit = true;
 					break;
 				}
@@ -259,7 +259,12 @@ int ticTacToe(SDL_Renderer* gRenderer, SDL_Texture* tTexture,
 		if(ans != 2){
 			SDL_RenderCopy( gRenderer, tTexture, NULL, NULL );
 			if(ans){
-				SDL_RenderCopy( gRenderer, ans==-1? oTexture: xTexture, NULL, &winQuad );
+				if(ans == -2 || ans == -3){
+
+				}
+				else{
+					SDL_RenderCopy( gRenderer, ans==-1? oTexture: xTexture, NULL, &winQuad );
+				}
 			}
 			else{
 				winQuad.x -= winQuad.w/2;
@@ -269,7 +274,7 @@ int ticTacToe(SDL_Renderer* gRenderer, SDL_Texture* tTexture,
 			}
 			SDL_RenderPresent( gRenderer );
 			quit = true;
-			SDL_Delay(1000);
+			SDL_Delay(500);
 		}
 
 		SDL_RenderPresent( gRenderer );

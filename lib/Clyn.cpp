@@ -43,6 +43,10 @@ void Clyn::move(){
 	}
 }
 
+int Clyn::amountLivesToChange(){
+	return -2;
+}
+
 void Clyn::render(){
 	SDL_RenderCopy( gRenderer, texture, NULL, &quad );
 }

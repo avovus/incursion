@@ -19,6 +19,8 @@ class Clyn: public Mob{
 
 		virtual void move();
 
+		virtual int amountLivesToChange();
+
 		virtual void render();
 };
 

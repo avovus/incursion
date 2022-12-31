@@ -27,6 +27,14 @@ int Mod::amountLivesToChange(){
 	return 1;
 }
 
+bool Mod::isCollidable(){
+    return true;
+}
+
+bool Mod::needBoom(){
+    return false;
+}
+
 void Mod::move(){
 	step++;
 	if(step == 2){

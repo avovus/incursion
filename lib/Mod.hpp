@@ -22,6 +22,8 @@ class Mod: public Mob{
 
 		virtual void move();
 		virtual void render();
+		virtual bool isCollidable();
+		virtual bool needBoom();
 		virtual int amountLivesToChange();
 };
 

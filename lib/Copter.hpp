@@ -35,6 +35,7 @@ class Copter: public Mob{
 
 		virtual void move();
 		virtual void render();
+		virtual int amountLivesToChange();
 };
 
 #endif

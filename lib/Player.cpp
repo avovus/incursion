@@ -26,7 +26,7 @@ bool Player::isCollided(Mob* mob){
 	if((quad.x+quad.w >= q.x+5 &&
 		quad.x <= q.x+q.w-5 &&
 		quad.y+quad.h >= q.y+5 &&
-		quad.y <= q.y+q.h-5)) {
+		quad.y <= q.y+q.h-5) && mob->isCollidable()){
 		return true;
 	}
 	return false;

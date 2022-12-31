@@ -106,6 +106,15 @@ void Copter::move(){
 	}
 }
 
+int Copter::amountLivesToChange(){
+	if(direction == 0){
+		return -1;
+	}
+	else{
+		return -3;
+	}
+}
+
 void Copter::render(){
 	SDL_RenderCopy( gRenderer, texture, NULL, &quad );
 }
