@@ -27,6 +27,10 @@ class Mob{
 			return true;
 		}
 
+		virtual bool needKill(){
+			return false;
+		}
+
 		virtual int amountLivesToChange(){
 			return -1;
 		}

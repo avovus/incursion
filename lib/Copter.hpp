@@ -6,7 +6,7 @@
 
 class Copter: public Mob{
 	public:
-		const static int W = 170, H = 65;
+		const static int W = 140, H = 54;
 	private:
 		SDL_Renderer* gRenderer = NULL;
 		int speed = 0;

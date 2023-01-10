@@ -60,6 +60,9 @@ SDL_Texture* gTexture = NULL;
 SDL_Texture* playerTexture = NULL;
 SDL_Texture* menuTexture = NULL;
 SDL_Texture* modTexture = NULL;
+SDL_Texture* healTexture = NULL;
+TTF_Font* gFont = NULL;
+
 
 bool init()
 {
@@ -149,6 +152,7 @@ bool loadMedia()
 	carTexture2 = loadTexture( "images/car2.png" );
 	carTexture = loadTexture( "images/car.png" );
 	modTexture = loadTexture( "images/mod1.png" );
+	healTexture = loadTexture( "images/mod_heal.png" );
 	menuTexture = loadTexture( "images/menu.png" );
 	boomTexture = loadTexture( "images/boom.png" );
 	if( gTexture == NULL )
@@ -161,11 +165,11 @@ bool loadMedia()
 
 	if( gFont == NULL )
 	{
-		printf( "Failed to load Floripa font! SDL_ttf Error: %s\n",
+		printf( "Failed to load Marske font! SDL_ttf Error: %s\n",
 			TTF_GetError() );
 		return -1;
 	}
-
+	SDL_Color textColor = { 0, 0, 0 };
 	return success;
 }
 
@@ -245,7 +249,7 @@ void settings(){
 
 	if( gFont == NULL )
 	{
-		printf( "Failed to load Floripa font! SDL_ttf Error: %s\n",
+		printf( "Failed to load Floripa font in settings! SDL_ttf Error: %s\n",
 			TTF_GetError() );
 	}
 
@@ -323,13 +327,12 @@ int gameMod1(){
 			TTF_GetError() );
 	}
 
-	SDL_Color textColor = { 0, 0, 0 };
-
 	mobs.push_back(
 		new Car(600, SCREEN_H - Car::H - 35, -2, gRenderer, carTexture));
 
 	int ans = 0;
 	bool quit = false;
+	SDL_Color textColor = { 0, 0, 0 };
 	SDL_Event e;
 	while(!quit){
 		while( SDL_PollEvent( &e ) != 0 ){
@@ -445,7 +448,7 @@ int gameMod1(){
 		}
 
 		if(spawnHil){
-			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, modTexture));
+			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, healTexture));
 			spawnHil = false;
 		}
 
@@ -477,7 +480,7 @@ int gameMod1(){
 		}
 
 		if(timer%15 == 0 && !sec && timer != 0){
-			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, modTexture));
+			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, healTexture));
 		}
 
 	if(timer == 40 && !sec){
@@ -694,6 +697,7 @@ int gameMod1(){
 				if(mobs[i]->needBoom()){
 					mobs.push_back(new Explosion(mobs[i]->getQuad(), gRenderer, boomTexture));
 				}
+				delete mobs[i];
 				mobs.erase(mobs.begin() + i);
 			}
 		}
@@ -807,7 +811,7 @@ int gameMod1(){
 
 void spawnRandomMob(vector <Mob*> & mobs){
 	srand(time(0));
-	int a = rand() % 7;
+	int a = rand() % 12;
 	switch(a){
 		case 0:
 			mobs.push_back(
@@ -818,15 +822,19 @@ void spawnRandomMob(vector <Mob*> & mobs){
 				new Car(600, SCREEN_H - Car::H - 20, 3, gRenderer, carTexture2));
 		break;
 		case 2:
+		case 8:
 			mobs.push_back(new Copter(-2500, 150, 0, -2, gRenderer, copterTexture2, 0, false, 0, 550));
 		break;
 		case 3:
+		case 9:
 			mobs.push_back(new Copter(-100, 150, 0, 2, gRenderer, copterTexture3, 0, false, 0, 550));
 		break;
 		case 4:
+		case 10:
 			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 0, false, 0, 550));
 		break;
 		case 5:
+		case 11:
 			mobs.push_back(new Copter(-500, 160, 0, 2, gRenderer, copterTexture5, 0, false, 0, 550));
 		break;
 		case 6:
@@ -855,7 +863,7 @@ int gameMod2(){
 
 	if( gFont == NULL )
 	{
-		printf( "Failed to load Floripa font! SDL_ttf Error: %s\n",
+		printf( "Failed to load Marske font in gameMod2! SDL_ttf Error: %s\n",
 			TTF_GetError() );
 	}
 
@@ -943,6 +951,21 @@ int gameMod2(){
 								spawnRand = true;
 							}
 
+							else if(a == "KILLP"){
+								cout << "selfkilling..." << endl;
+								quit = true;
+							}
+
+							else if(a == "KILLALL"){
+								cout << "DESTROY!!!" << endl;
+								for(int i = 0; i<mobs.size(); ++i){
+									delete mobs[i];
+								}
+								mobs.clear();
+							}
+							else if(a == "KILL"){
+								cout << "kill who?" << endl;
+							}
 						}
 					break;
 
@@ -985,7 +1008,7 @@ int gameMod2(){
 		}
 
 		if(spawnHil){
-			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, modTexture));
+			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, healTexture));
 			spawnHil = false;
 		}
 
@@ -994,23 +1017,30 @@ int gameMod2(){
 			spawnRand = false;
 		}
 
-		if(timer >= 3 && timer < 5 && mobs.size() < 2 && !sec){
+		//спавн основной массы
+
+		//система поддержки количества мобов на экране
+		if(timer >= 2 && timer < 5 && mobs.size() < 2 && !sec && timer%2 == 0){
 			spawnRandomMob(mobs);
 		}
 
-		if(timer >= 5 && timer < 15 && mobs.size() < 4 && !sec){
+		if(timer >= 5 && timer < 15 && mobs.size() < 3 && !sec && timer%2 == 0){
 			spawnRandomMob(mobs);
 		}
 
-		if(timer >= 15 && timer < 30 && mobs.size() < 6 && !sec){
+		if(timer >= 15 && timer < 30 && mobs.size() < 5 && !sec && timer%2 == 0){
 			spawnRandomMob(mobs);
 		}
 
-		if(timer >= 30 && timer < 60 && mobs.size() < 7 && !sec){
+		if(timer >= 30 && timer < 60 && mobs.size() < 7 && !sec && timer%2 == 0){
 			spawnRandomMob(mobs);
 		}
 
-		if(timer >= 60 && timer < 90 && mobs.size() < 10 && !sec){
+		if(timer >= 60 && timer < 90 && mobs.size() < 9 && !sec && timer%2 == 0){
+			spawnRandomMob(mobs);
+		}
+
+		if(timer >= 90 && mobs.size() < 12 && !sec){
 			spawnRandomMob(mobs);
 		}
 
@@ -1059,9 +1089,13 @@ int gameMod2(){
 */
 
 		if(timer%30 == 0 && !sec && timer != 0){
-			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, modTexture));
+			mobs.push_back(new Mod(SCREEN_W,100,1, gRenderer, healTexture));
 		}
-		
+
+		if(timer%45 == 0 && !sec && timer != 0){
+			mobs.push_back(new Mod(SCREEN_W,100,2, gRenderer, modTexture, true));
+		}
+
 		for(int i = 0; i < mobs.size();++i){
 			Mob* c = mobs[i]->spawnChild(rocketTexture,timer,sec);
 			if(c != NULL){
@@ -1077,8 +1111,16 @@ int gameMod2(){
 
 		for(int i = 0; i < mobs.size();++i){
 			if(p.isCollided(mobs[i])){
-				mobs[i]->destroy();
-				p.changeLives(mobs[i]->amountLivesToChange());
+				if(mobs[i]->needKill()){
+					for(int i = 0; i<mobs.size(); ++i){
+						delete mobs[i];
+					}
+					mobs.clear();
+				}
+				else{
+					mobs[i]->destroy();
+					p.changeLives(mobs[i]->amountLivesToChange());
+				}
 			}
 		}
 
@@ -1087,6 +1129,7 @@ int gameMod2(){
 				if(mobs[i]->needBoom()){
 					mobs.push_back(new Explosion(mobs[i]->getQuad(), gRenderer, boomTexture));
 				}
+				delete mobs[i];
 				mobs.erase(mobs.begin() + i);
 			}
 		}
@@ -1172,16 +1215,18 @@ int gameMod2(){
 }
 
 int main(int argc, char* args[]){
+/*
 	TTF_Font* gFont = TTF_OpenFont( "fonts/Marske.ttf", 35 );
 
 	if( gFont == NULL )
 	{
-		printf( "Failed to load Floripa font! SDL_ttf Error: %s\n",
+		printf( "Failed to load Marske font in main! SDL_ttf Error: %s\n",
 			TTF_GetError() );
 	}
 
 	SDL_Color textColor = { 0, 0, 0 };
 
+*/
 	if( !init() )
 	{
 		printf( "Failed to initialize!\n" );
@@ -1196,6 +1241,8 @@ int main(int argc, char* args[]){
 		{
 			bool quit = false;
 
+			SDL_Color textColor = { 0, 0, 0 };
+
 			SDL_Event e;
 
 			while( !quit )
@@ -1208,6 +1255,7 @@ int main(int argc, char* args[]){
 					case 2:{
 						switch(ticTacToe(gRenderer,menuTexture,fieldTexture, x1Texture, xTexture, oTexture)){
 /*							case 0:{
+
 								MenuTexture txt = tf(gFont,"вы сыграли в ничью", gRenderer,
 									textColor);
 								SDL_Rect qd = {
@@ -1241,6 +1289,8 @@ int main(int argc, char* args[]){
 								SDL_DestroyTexture(txt.mTexture);
 								SDL_DestroyTexture(txt1.mTexture);
 							}break;
+
+
 							case 1:{
 								MenuTexture txt = tf(gFont,"вы победили", gRenderer,
 									textColor);

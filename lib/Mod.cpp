@@ -14,21 +14,30 @@
 using namespace std;
 
 Mod::Mod( int x, int y,
-	int speed, SDL_Renderer* gRenderer, SDL_Texture* modTexture)
+	int speed, SDL_Renderer* gRenderer, SDL_Texture* modTexture, bool nKill)
 	: Mob({ x, y, Mod::W, Mod::H })
 {
 	this->gRenderer = gRenderer;
+	this->nKill = nKill;
 	texture = modTexture;
 	this->speed = speed;
 	quad.y = 50 + rand() % 450;
 }
 
 int Mod::amountLivesToChange(){
-	return 1;
+	if(!nKill)
+		return 1;
+	else{
+		return 0;
+	}
 }
 
 bool Mod::isCollidable(){
     return true;
+}
+
+bool Mod::needKill(){
+    return nKill;
 }
 
 bool Mod::needBoom(){
