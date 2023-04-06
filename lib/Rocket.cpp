@@ -31,6 +31,10 @@ void Rocket::move(){
 	}
 }
 
+int Rocket::amountLivesToChange(){
+		return -1;
+}
+
 void Rocket::render(){
 	SDL_RenderCopy( gRenderer, texture, NULL, &quad );
 }

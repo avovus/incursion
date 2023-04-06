@@ -462,7 +462,7 @@ int gameMod1(){
 		}
 
 		if(timer == 10 && !sec){
-			mobs.push_back(new Copter(430, -50, 1, 2, gRenderer, copterTexture, timer, true));
+			mobs.push_back(new Copter(430, -50, 1, 2, gRenderer, copterTexture, timer, true)); //вернуть параметр на тру, т.к. спавн ракеты
 			mobs.push_back(
 				new Car(600, SCREEN_H - Car::H - 20, 3, gRenderer, carTexture2));
 			mobs.push_back(new Copter(1, -150, 0, -2, gRenderer, copterTexture4, 0, false, 0, 550));

@@ -18,9 +18,7 @@ class Car: public Mob{
 
 		virtual void move();
 		virtual void render();
-		virtual int amountLivesToChange(){
-			return -2;
-		}
+		virtual int amountLivesToChange();
 
 };
 

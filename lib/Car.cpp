@@ -6,6 +6,8 @@
 
 #include "Car.hpp"
 #include "Constants.hpp"
+#include "Player.hpp"
+#include "Mob.hpp"
 
 using namespace std;
 
@@ -31,6 +33,10 @@ void Car::move(){
 			quad.x = 0;
 		}
 	}
+}
+
+int Car::amountLivesToChange(){
+		return -2;
 }
 
 void Car::render(){
